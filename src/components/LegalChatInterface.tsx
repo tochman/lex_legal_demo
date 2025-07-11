@@ -33,12 +33,21 @@ export default function LegalChatInterface() {
     setIsLoading(true);
 
     try {
+      // Convert messages to the format expected by the API
+      const conversationMessages = messages.map(msg => ({
+        role: msg.type === "question" ? "user" : "assistant",
+        content: msg.content
+      }));
+
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ question: userQuestion }),
+        body: JSON.stringify({ 
+          question: userQuestion,
+          messages: conversationMessages
+        }),
       });
 
       const data = await response.json();
